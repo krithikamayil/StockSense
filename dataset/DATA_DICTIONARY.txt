@@ -1,0 +1,21 @@
+DATA DICTIONARY / MODEL NOTES
+
+Primary tables:
+- olist_customers_dataset.csv: one row per customer_id; customer_unique_id groups repeat-customer identities.
+- olist_orders_dataset.csv: one row per order_id; customer_id references customers.
+- olist_order_items_dataset.csv: one row per (order_id, order_item_id); product_id and seller_id reference dimensions.
+- olist_order_payments_dataset.csv: one row per (order_id, payment_sequential).
+- olist_order_reviews_dataset.csv: one row per (review_id, order_id) association. review_id alone is not unique in the source.
+- olist_products_dataset.csv: one row per product_id; includes supplied English category translation.
+- olist_sellers_dataset.csv: one row per seller_id.
+- olist_geolocation_dataset.csv: distinct source geolocation observations by full row; multiple coordinates can legitimately share a ZIP prefix.
+- product_category_name_translation.csv: category translation lookup.
+
+Analytics master:
+- olist_enterprise_orders.csv is one row per order_id, joining customer attributes and aggregating order items, payments, reviews, and product categories.
+- Monetary columns ending in _brl are numeric Brazilian-real amounts as represented by the source dataset.
+- Date columns use ISO 8601 strings; null timestamps are intentionally preserved.
+- date_quality_flags is a pipe-delimited list of chronology observations; empty means no listed anomaly.
+- data_source_type identifies these as historical source records, not synthetic records.
+
+CSV encoding: UTF-8; delimiter comma; standard double-quote escaping; header row included.

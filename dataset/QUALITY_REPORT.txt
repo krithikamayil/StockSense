@@ -1,0 +1,55 @@
+OLIST ENTERPRISE DATASET - QUALITY REPORT
+Generated: 2026-11-10
+Source: User-provided Olist Brazilian e-commerce archive
+Provenance: Historical source data; no synthetic transactions or real-world claims added.
+
+DELIVERABLES
+- olist_enterprise_orders.csv: analytics-ready order-grain dataset (one row per order).
+- olist_enterprise_relational_tables.zip: cleaned normalized source tables, retaining relationships.
+- This report is included in the relational bundle.
+
+RECORD COUNTS
+- Original rows across 9 source tables: 1,550,922
+- Final rows across 9 cleaned source tables: 1,289,091
+- Exact duplicate rows removed: 261,831 (all were exact duplicates in geolocation).
+- Records modified/standardized: 1,414,013 table-row instances. This count reflects standardized text/ZIP/date serialization; it is not a count of changed business facts.
+- Orders in analytics-ready master CSV: 99,441
+
+MISSING VALUES
+- Original missing cells: 153,259
+- Missing cells after cleaning: 153,911
+- Optional lifecycle timestamps remain null when not present (e.g. canceled/incomplete orders).
+- Optional product attributes/category values remain null when source data did not provide them.
+- Review comment title/message blanks are represented as null.
+- No synthetic values were inserted to disguise missing source information.
+
+DATES
+- Date values serialized consistently as ISO 8601: YYYY-MM-DDTHH:MM:SS.
+- Actual historical transaction dates preserved (2016-09 through 2018-10); no date values were shifted to 2025-2026.
+- Date corrections to underlying business facts: 0.
+- Chronology observations retained and flagged in order-level CSV where applicable:
+  approval timestamp after carrier timestamp: 1,359
+  customer delivery timestamp before carrier timestamp: 23
+  delivered after estimated date: 7,827
+- Four order-item shipping-limit timestamps occur in 2020; retained as source anomalies rather than guessed corrections.
+
+DEDUPLICATION NOTES
+- Geolocation table: removed 261,831 exact duplicate rows.
+- Other tables had no exact duplicate rows.
+- Review IDs recur across multiple orders in the source; these rows were preserved because the (review_id, order_id) pairs are unique and represent separate order-review associations. No valid records were removed on this basis.
+
+STRUCTURE / ASSUMPTIONS
+- Original normalized tables retained as separate CSVs in the relational bundle.
+- Product dimension enriched with the supplied English category translation table.
+- Customer and seller country fields set to Brazil based on the dataset's documented/source context; these are contextual labels, not individually verified customer addresses.
+- Currency code BRL is used for the monetary fields in the analytics master, consistent with the Brazilian Olist dataset context.
+- Master CSV is at order grain. Item and payment amounts are aggregated by order; payment methods and product categories are pipe-delimited distinct values.
+- Missing item/payment/review aggregates mean no linked source rows or missing source data; they are not imputed.
+- Geolocation remains a separate table because it is a many-row ZIP-prefix reference, not a one-to-one customer/seller dimension.
+
+VALIDATION
+- Primary/business key checks: PASS for customer, order, product, seller, order-item composite, payment composite, category translation, and review/order pair.
+- Foreign-key checks: PASS for all tested order/customer/item/product/seller/payment/review relationships.
+- Master order ID uniqueness and one-row-per-order: PASS.
+- CSV round-trip load test: PASS (UTF-8, standard CSV quoting).
+- No synthetic transaction/customer/product/seller records created.
